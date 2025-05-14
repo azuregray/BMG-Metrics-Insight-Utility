@@ -1,0 +1,8 @@
+ezdxf
+opencv-python
+easyocr
+numpy
+matplotlib
+tk
+openpyxl
+streamlit
