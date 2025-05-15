@@ -1,5 +1,5 @@
 ezdxf
-opencv-python
+opencv-python-headless
 easyocr
 numpy
 matplotlib
