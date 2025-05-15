@@ -5,7 +5,3 @@ numpy
 matplotlib
 openpyxl
 streamlit
-tempfile
-os
-difflib
-shutil
