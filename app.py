@@ -1,34 +1,45 @@
-# app.py
-import os, subprocess, json, time, sys, streamlit as st
-from UnitValuesRendering import harvesterFunc, excelProcessor
+import os, streamlit as st
 
-def select_folder(key):
-    if st.button(f"Set {key.replace('_', ' ').title()}", key=f"{key}_button"):
-        result = subprocess.run(["python", "folder_selector.py"], capture_output=True, text=True)
-        if result.returncode == 0:
-            folder_data = json.loads(result.stdout)
-            folder_path = folder_data.get("folder_path")
-            if folder_path and os.path.isdir(folder_path):
-                st.session_state[key] = folder_path
-            else:
-                st.session_state[key] = None
-        else:
-            st.error("Error selecting folder")
+def uploadsHandler(session_key):
+    uploaded_InputFiles = st.file_uploader("Upload all files from the Input folder...", accept_multiple_files=True, key="input_uploader")
+    uploaded_OutputFiles = st.file_uploader("Upload all files from the Output folder...", accept_multiple_files=True, key="output_uploader")
 
-def open_file(file_path):
-    try:
-        if sys.platform == "win32":
-            os.startfile(file_path)
-        elif sys.platform == "darwin":
-            subprocess.run(["open", file_path])
-        else:
-            subprocess.run(["xdg-open", file_path])
-    except Exception as e:
-        st.error(f"Could not open the file :: {e}")
+    INPUT_FOLDER = f'InputFilesFolder_{session_key}'
+    OUTPUT_FOLDER = f'OutputFilesFolder_{session_key}'
+    
+    if uploaded_InputFiles and uploaded_OutputFiles:
+        os.makedirs(INPUT_FOLDER, exist_ok=True)  # Create the folder if it doesn't exist
+        for file in uploaded_InputFiles:
+            file_path = os.path.join(INPUT_FOLDER, file.name)
+            with open(file_path, "wb") as f:
+                f.write(file.read())
+        
+        os.makedirs(OUTPUT_FOLDER, exist_ok=True)  # Create the folder if it doesn't exist
+        for file in uploaded_OutputFiles:
+            file_path = os.path.join(OUTPUT_FOLDER, file.name)
+            with open(file_path, "wb") as f:
+                f.write(file.read())
+        return INPUT_FOLDER, OUTPUT_FOLDER
+    return None, None
+
+def cleaningHandler(session_key):
+    import shutil
+    
+    for item in os.listdir():
+        if session_key in item:
+            try:
+                shutil.rmtree(item)
+            except:
+                print(f'There was a problem while clearning folders for session_key: {session_key}')
 
 def main():
+    import secrets, time
+    from UnitValuesRendering import harvesterFunc, excelProcessor
+    
     st.title("BMG Values Comparison Tool")
 
+    if "session_key" not in st.session_state:
+        st.session_state.session_key = secrets.token_hex(4)
     if "input_folder" not in st.session_state:
         st.session_state.input_folder = None
     if "output_folder" not in st.session_state:
@@ -43,14 +54,14 @@ def main():
         st.session_state.excel_output_path = None
     if "time_taken" not in st.session_state:
         st.session_state.time_taken = None
-
-    select_folder("input_folder")
-    select_folder("output_folder")
-
-    st.write("**Input folder:**", st.session_state.input_folder if st.session_state.input_folder else "Not selected")
-    st.write("**Output folder:**", st.session_state.output_folder if st.session_state.output_folder else "Not selected")
+    
+    session_key = st.session_state.session_key
+    
+    if not st.session_state.input_folder or not st.session_state.output_folder:
+        st.session_state.input_folder, st.session_state.output_folder = uploadsHandler(session_key)
 
     if st.session_state.input_folder and st.session_state.output_folder:
+        st.write("**✅ Your files have been saved successfully.**")
         if st.button("Run Comparison"):
             st.subheader("Processing...")
 
@@ -71,8 +82,9 @@ def main():
                 )
 
                 endTime = time.perf_counter()
-                
                 st.session_state.time_taken = endTime - startTime
+                
+                cleaningHandler(session_key)
 
                 output_lines = []
                 for filename, values_in, values_out, match in st.session_state.backend_results:
@@ -114,6 +126,7 @@ def main():
                                 mime='application/octet-stream')
 
     if st.session_state.error_message:
+        cleaningHandler(session_key)
         st.text_area("Error", st.session_state.error_message, height=200)
 
 if __name__ == "__main__":

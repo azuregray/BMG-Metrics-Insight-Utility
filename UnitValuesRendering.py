@@ -1,7 +1,7 @@
 '''
 ------------------------------------------------------------- DOCUMENTATION STARTS HERE
 
-[SCRIPT NAME]   20-[FINAL]UnitValuesRendering.py
+[SCRIPT NAME]   UnitValuesRendering.py
 
 [SCRIPT TYPE/DEPENDENCIES]  No External Script Dependencies; Excel Template File - "Results-ExportTemplate.xlsx"
 
@@ -13,7 +13,7 @@
                 Present the results in a seamless fashion > Export to a structured Excel File on Demand.
 
 [LIBRARIES USED]    (RUNNING HEADLESS)      ezdxf, os, cv2, shutil, easyocr, numpy, matplotlib.pyplot, PIL,
-                                            difflib.SequenceMatcher, openpyxl.load_workbook
+                                            difflib.SequenceMatcher, openpyxl.load_workbook, tempfile
                     (RUNNING SCRIPT AS IS)  tkinter.filedialog, time.sleep, ctypes.windll
 
 [FUNCTIONS]     gracefulErrors(errorMessage),
@@ -71,7 +71,6 @@ def gracefulErrors(errorMessage, exitRequired=False):
             print()
             exit(1)
         else:
-            print(f'[Error Message] ::: ⚠️ {errorMessage}')
             raise Exception(errorMessage)
     elif not exitRequired:
         print(f'\n\n❌ WARNING ::: {errorMessage}\n\n')
@@ -93,7 +92,7 @@ def inputImageProducer(filePath):
     except Exception as e:
         gracefulErrors(f'Error reading DXF file: {e}', exitRequired=True)
     
-    output_folder = os.path.join(os.path.dirname(filePath), "Layers_TemporaryDirectory")
+    output_folder = os.path.join(os.path.dirname(filePath), "Layers_TempDir")
     os.makedirs(output_folder, exist_ok=True)
 
     target_layer = "41"
@@ -135,7 +134,7 @@ def outputImageProducer(filePath):
     except Exception as e:
         gracefulErrors(f'Error reading DXF file: {e}', exitRequired=True)
     
-    output_folder = os.path.join(os.path.dirname(filePath), "Layers_TemporaryDirectory")
+    output_folder = os.path.join(os.path.dirname(filePath), "Layers_TempDir")
     os.makedirs(output_folder, exist_ok=True)
 
     target_layers = {"INFTEXT61", "2", "SKVIEW2"}
@@ -461,8 +460,6 @@ def pathCorresponder(inputDirPath, outputDirPath):
     
     mutualFilesList = [file for file in inputFilesList if file in outputFilesList]
     nonMutualFilesList = [file for file in inputFilesList if file not in outputFilesList] + [file for file in outputFilesList if file not in inputFilesList]
-    print('\n\n\n', mutualFilesList)
-    print('\n\n\n', nonMutualFilesList)
     
     returnableList = []
     
@@ -588,22 +585,24 @@ if __name__ == '__main__':
     for index, (fileName, inputValuesList, outputValuesList, similarityVerdict) in enumerate(finalResults, start=1):
             print(f'\n:::: File #{index} ::::')
             print(f'Processed File Name :::: {fileName}')
-            print(f'Input Values :::: {inputValuesList}')
-            print(f'Output Values :::: {outputValuesList}')
-            if similarityVerdict == 'True':
-                print('Are they same? :::: ✅✅ YES ✅✅\n')
-            elif similarityVerdict == 'False':
-                print('Are they same? :::: ❌❌ NO ❌❌\n')
+            if similarityVerdict.lower() != 'unmatched':
+                print(f'Input Values :::: {inputValuesList}')
+                print(f'Output Values :::: {outputValuesList}')
+                if similarityVerdict == 'True':
+                    print('Are they same? :::: ✅✅ YES ✅✅\n')
+                elif similarityVerdict == 'False':
+                    print('Are they same? :::: ❌❌ NO ❌❌\n')
             elif similarityVerdict.lower() == 'unmatched':
-                print('Are they same? :::: ⚠️⚠️ File Match Error ⚠️⚠️\n')
+                print('Condition :::: ⚠️⚠️ Matching File Not Found ⚠️⚠️\n')
+    
+    print('\n\nData has been processed from your files.')
     
     if errorLogs:
-        print('\n\n\n:::::::: There were some non-critical errors. ::::::::\n')
+        print('\n\n\n:::::::: But, There were also some non-critical errors. ::::::::\n')
         for index, logMessage in enumerate(errorLogs, start=1):
             print(f'{index}. {logMessage}')
     
-    print('\n\nData has been processed from your files.')
-    for letter in 'Press [ENTER] to exit.\nOr You can also type [YES] to export the results into an Excel file.\n':
+    for letter in '\nPress [ENTER] to exit.\nOr You can also type [YES] to export the results into an Excel file.\n':
         print(letter, flush=True, end='')
         sleep(0.04)
     

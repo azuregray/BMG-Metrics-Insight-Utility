@@ -3,6 +3,9 @@ opencv-python
 easyocr
 numpy
 matplotlib
-tk
 openpyxl
 streamlit
+tempfile
+os
+difflib
+shutil
