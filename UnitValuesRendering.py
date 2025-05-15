@@ -6,24 +6,15 @@
 [SCRIPT TYPE/DEPENDENCIES]  No External Script Dependencies; Excel Template File - "Results-ExportTemplate.xlsx"
 
 [DESCRIPTION]   This python script combines the functionalities of both Input & Output Files Processing >
-                Converting purely dimension layers of each DXF file into a single Combined Image >
-                Producing rotations of the combined image for every 45 degrees interval >
-                Extracting Text from each of the rotated images > Manage workspace cleanUp >
-                Filter processed text > Collect all post-processed values >
+                Targeting purely dimension layers of each DXF file >
+                Parsing Dimensional Attributes values from modelspace entities >
+                Post Processing parsed values > Manage workspace cleanUp >
                 Present the results in a seamless fashion > Export to a structured Excel File on Demand.
 
-[LIBRARIES USED]    (RUNNING HEADLESS)      ezdxf, os, cv2, shutil, easyocr, numpy, matplotlib.pyplot, PIL,
-                                            difflib.SequenceMatcher, openpyxl.load_workbook, tempfile
+[LIBRARIES USED]    (RUNNING HEADLESS)      os, tempfile
                     (RUNNING SCRIPT AS IS)  tkinter.filedialog, time.sleep, ctypes.windll
 
 [FUNCTIONS]     gracefulErrors(errorMessage),
-                textScanner(imagePath),
-                inputImageProducer(filePath),
-                outputImageProducer(filePath),
-                imageRotatory(imagePath, outputDir),
-                inputHardCodedFilter(rawData),
-                outputHardCodedFilter(rawData),
-                uniquenessEngine(data),
                 renderValues(dxfPath, dxfType),
                 pathCorresponder(inputDirPath, outputDirPath),
                 harvesterFunc(inputDirPath, outputDirPath),   --> MAIN FUNCTION
@@ -32,26 +23,12 @@
 [NOTE]  1.  This code runs only on DXF files.
         2.  Please make sure, filenames are exactly identical in both the folders before running this script.
         3.  Please make sure you have the Excel Template file named "Results-ExportTemplate.xlsx" in the same directory as the script.
-        4.  Read the code atleast once and adjust accordingly for your machine suitability.
-        5.  Make sure to have CUDA-related toolkit and libraries installed before running.
-            Otherwise, EasyOCR will automatically default to CPU, which takes too much resources and time.
-        6.  Main Program Code is also included for better UI/UX, independent of a Front-End Interface. (Refer section starting Line:481)
+        4.  Main Program Code is also included for better UI/UX, independent of a Front-End Interface. (Refer section starting Line:216)
 
 ------------------------------------------------------------- DOCUMENTATION ENDS HERE
 '''
 
-import ezdxf, os, cv2, shutil, easyocr, matplotlib.pyplot as plt, tempfile
-from ezdxf.addons.drawing import RenderContext, Frontend
-from ezdxf.addons.drawing.matplotlib import MatplotlibBackend
-
-## Global Initialization of Progress Variables.
-global progressTotal
-global progressCounter
-
-if __name__ == '__main__':
-    scanner = easyocr.Reader(['en'], verbose=True)
-else:
-    scanner = easyocr.Reader(['en'], verbose=False)
+import os, tempfile
 
 def gracefulErrors(errorMessage, exitRequired=False):
     if exitRequired:
@@ -77,379 +54,60 @@ def gracefulErrors(errorMessage, exitRequired=False):
         if ('errorLogs' in locals()) or ('errorLogs' in globals()):
             errorLogs.append(f'❌ WARNING ::: {errorMessage}')
 
-def textScanner(imagePath):
-    try:
-        returnableData = scanner.readtext(imagePath, detail=0)
-        return returnableData
-    except Exception as e:
-        gracefulErrors(f'Error scanning text from {imagePath}: {e}')
-        return []
-
-def inputImageProducer(filePath):
-    try:
-        doc = ezdxf.readfile(filePath)
-        msp = doc.modelspace()
-    except Exception as e:
-        gracefulErrors(f'Error reading DXF file: {e}', exitRequired=True)
+def renderValues(dxfPath, dxfType):
+    import ezdxf
     
-    output_folder = os.path.join(os.path.dirname(filePath), "Layers_TempDir")
-    os.makedirs(output_folder, exist_ok=True)
-
-    target_layer = "41"
-    layer_entities = [entity for entity in msp if entity.dxf.layer == target_layer]
-    final_output_path = os.path.join(output_folder, f'{os.path.basename(filePath)[:-4]}.png')
-    
-    fig, ax = plt.subplots(facecolor='black')
-    ax.set_facecolor('black')
-    ctx = RenderContext(doc)
-    backend = MatplotlibBackend(ax)
-    frontend = Frontend(ctx, backend)
-
-    for entity in layer_entities:
-        try:
-            properties = ctx.resolve_all(entity)
-            frontend.draw_entity(entity, properties)
-        except Exception as e:
-            gracefulErrors(f'Error drawing entity >> {entity.dxftype()} :: {e}')
-
-    ax.set_aspect('equal')
-    ax.autoscale()
-    plt.axis('off')
-
-    try:
-        plt.savefig(final_output_path, dpi=1200, bbox_inches='tight', pad_inches=0, facecolor='black')
-        plt.close(fig)
-    except Exception as e:
-        gracefulErrors(f'Error saving PNG for target layer >> {target_layer} :: {e}')
-    
-    return final_output_path
-
-def outputImageProducer(filePath):
-    from PIL import Image
-    Image.MAX_IMAGE_PIXELS = None
-    
-    try:
-        doc = ezdxf.readfile(filePath)
-        msp = doc.modelspace()
-    except Exception as e:
-        gracefulErrors(f'Error reading DXF file: {e}', exitRequired=True)
-    
-    output_folder = os.path.join(os.path.dirname(filePath), "Layers_TempDir")
-    os.makedirs(output_folder, exist_ok=True)
-
-    target_layers = {"INFTEXT61", "2", "SKVIEW2"}
-    
-    for layer in target_layers:
-        layer_entities = [entity for entity in msp if entity.dxf.layer == layer]
-        
-        if not layer_entities:
-            continue
-        
-        png_path = os.path.join(output_folder, f'{os.path.basename(filePath).replace('.dxf', '')}_{layer}.png')
-        fig, ax = plt.subplots(facecolor='black')
-        ax.set_facecolor('black')
-        ctx = RenderContext(doc)
-        backend = MatplotlibBackend(ax)
-        frontend = Frontend(ctx, backend)
-
-        for entity in layer_entities:
-            try:
-                properties = ctx.resolve_all(entity)
-                frontend.draw_entity(entity, properties)
-            except Exception as e:
-                gracefulErrors(f'Error drawing entity >> {entity.dxftype()} :: {e}')
-
-        ax.set_aspect('equal')
-        ax.autoscale()
-        plt.axis('off')
-
-        try:
-            plt.savefig(png_path, dpi=1200, bbox_inches='tight', pad_inches=0, facecolor='black')
-            plt.close(fig)
-        except Exception as e:
-            gracefulErrors(f'Error saving PNG for layer >> {layer} :: {e}')
-    
-    combined_fig, combined_ax = plt.subplots(facecolor='black')
-    combined_ax.set_facecolor('black')
-    ctx = RenderContext(doc)
-    backend = MatplotlibBackend(combined_ax)
-    frontend = Frontend(ctx, backend)
-
-    for entity in msp:
-        if entity.dxf.layer in {"2", "SKVIEW2"}:
-            try:
-                properties = ctx.resolve_all(entity)
-                properties.color = 7
-                frontend.draw_entity(entity, properties)
-            except Exception as e:
-                pass
-
-    combined_ax.set_aspect('equal')
-    combined_ax.autoscale()
-    plt.axis('off')
-    combined_output_path = os.path.join(output_folder, "combined_layers.png")
-
-    try:
-        plt.savefig(combined_output_path, dpi=1200, bbox_inches='tight', pad_inches=0, facecolor='black')
-        plt.close(combined_fig)
-    except Exception as e:
-        gracefulErrors(f'Error saving combined PNG :: {e}')
-
-    all_images = []
-    for file in sorted(os.listdir(output_folder)):
-        if file.endswith(".png") and (file == "combined_layers.png" or "INFTEXT61" in file):
-            img = Image.open(os.path.join(output_folder, file))
-            all_images.append(img)
-
-    if len(all_images) > 1:
-        widths, heights = zip(*(img.size for img in all_images))
-        total_width = max(widths)
-        total_height = sum(heights)
-        merged_image = Image.new("RGB", (total_width, total_height))
-        y_offset = 0
-        
-        for img in all_images:
-            merged_image.paste(img, (0, y_offset))
-            y_offset += img.size[1]
-
-        final_output_path = os.path.join(output_folder, "final_combined_output.png")
-        merged_image.save(final_output_path)
-    else:
-        final_output_path = os.path.join(output_folder, "final_combined_output.png")
-        if all_images:
-            all_images[0].save(final_output_path)
-        else:
-            gracefulErrors('No layer images were found to save', exitRequired=True)
-
-    for file in os.listdir(output_folder):
-        if file != "final_combined_output.png":
-            try:
-                os.remove(os.path.join(output_folder, file))
-            except Exception as e:
-                gracefulErrors(f'Error deleting buffer image >> {file} :: {e}')
-    
-    return final_output_path
-
-def imageRotatory(imagePath, outputDir):
-    import numpy as np
-    
-    try:
-        img = cv2.imread(imagePath)
-        if img is None:
-            gracefulErrors(f'Could not read image >> {imagePath}', exitRequired=True)
-
-        filename_extension = os.path.splitext(os.path.basename(imagePath))
-        os.makedirs(outputDir, exist_ok=True)
-        
-        angles = list(range(0, 316, 45)) # list(range(startAngle, EndAngle+1, AngleStepDifference))
-        
-        for angle in angles:
-            height, width = img.shape[:2]
-            center = (width / 2, height / 2)
-            rotation_matrix = cv2.getRotationMatrix2D(center, angle, 1.0)
-            cos = np.abs(rotation_matrix[0, 0])
-            sin = np.abs(rotation_matrix[0, 1])
-            new_width = int((height * sin) + (width * cos))
-            new_height = int((height * cos) + (width * sin))
-            rotation_matrix[0, 2] += (new_width / 2) - center[0]
-            rotation_matrix[1, 2] += (new_height / 2) - center[1]
-            rotated_img = cv2.warpAffine(img, rotation_matrix, (new_width, new_height))
-            output_path = os.path.join(outputDir, f'{filename_extension[0]}_rotated_{angle}{filename_extension[1]}')
-            cv2.imwrite(output_path, rotated_img)
-
-    except Exception as e:
-        gracefulErrors(f'Error occurred while generating Image Rotations :: {e}', exitRequired=True)
-    
-    if os.path.isfile(imagePath):
-        try:
-            shutil.rmtree(os.path.dirname(imagePath))
-        except:
-            gracefulErrors(f'There was an error deleting the original unrotated image >> {imagePath}')
-    
-    return len(os.listdir(outputDir))
-
-def inputHardCodedFilter(rawData):
-    bufferList = [item for item in rawData if (len(item) > 2)]
-    finalOutputList = []
-
-    for item in bufferList:
-        if '+' in item:
-            continue
-        if ('[' in item) or (']' in item):
-            continue
-        if '*' in item:
-            continue
-        item = item.replace('O', '0')
-        item = item.replace('(', '')
-        item = item.replace(')', '')
-        item = item.replace('O', '0')
-        item = item.replace(',', '.')
-        item = item.replace('_', '')
-        item = item.replace('-', '')
-        item = item.replace("'", '')
-        item = item.replace("`", '')
-        item = ''.join(char for char in item if not char.islower())
-        if '.' in item:
-            if item.startswith('.'):
-                continue
-            elif item.startswith('IC'):
-                try:
-                    dotIndex = item.rfind('.')
-                    finalOutputList.append(f'{float(item[dotIndex-2:]):.2f}')
-                except:
-                    finalOutputList.append(f'{float(item):.2f}')
-            elif (item[0] == '0') and (item[1] != '.'):
-                finalOutputList.append(f'{float(item[1:]):.2f}')
-            elif item.startswith('R') and (len(item) > 1):
-                finalOutputList.append(f'{float(item[1:]):.2f}')
-            elif not item.endswith('.'):
-                try:
-                    finalOutputList.append(f'{float(item):.2f}')
-                except:
-                    continue
-
-    return finalOutputList
-
-def outputHardCodedFilter(rawData):
-    bufferList = [item for item in rawData if (len(item) > 2)]
-    finalOutputList = []
-    
-    for item in bufferList:
-        item = item.replace('O', '0')
-        item = item.replace('(', '')
-        item = item.replace(')', '')
-        item = ''.join(char for char in item if not char.islower())
-        if '.' in item:
-            if item.startswith('.'):
-                finalOutputList.append(f'{float(item):.2f}')
-            elif item.startswith('IC'):
-                try:
-                    dotIndex = item.rfind('.')
-                    finalOutputList.append(f'{float(item[dotIndex-2:]):.2f}')
-                except:
-                    finalOutputList.append(f'{float(item):.2f}')
-            elif (item[0] == '0') and (item[1] != '.'):
-                finalOutputList.append(f'{float(item[1:]):.2f}')
-            elif item.startswith('R') and (len(item) > 1):
-                finalOutputList.append(f'{float(item[1:]):.2f}')
-            elif not item.endswith('.'):
-                try:
-                    finalOutputList.append(f'{float(item):.2f}')
-                except:
-                    continue
-    
-    return finalOutputList
-
-def uniquenessEngine(data, threshold=80):
-    from difflib import SequenceMatcher
-    
-    result = set()
-    n = len(data)
-    for i in range(n):
-        for j in range(i + 1, n):
-            a, b = data[i], data[j]
-
-            if isinstance(a,float) and isinstance(b, float):
-                a_num = float(a)
-                b_num = float(b)
-                avg = (a_num + b_num) / 2
-                diff_percent = abs(a_num - b_num) / avg * 100
-                closeness = 100 - diff_percent
-            else:
-                closeness = SequenceMatcher(None, a, b).ratio() * 100
-
-            if closeness < threshold:
-                result.add(data[i])
-                result.add(data[j])
-
-    return list(result)
-
-def renderValues(dxfPath, dxfType, progress_callback=None):
-    if progress_callback:
-        global progressTotal
-        global progressCounter
-    
-    if not dxfPath:
-        gracefulErrors('No DXF file selected.', exitRequired=True)
-    elif not os.path.exists(dxfPath):        # DXF Input File Existence Check
-        gracefulErrors(f'DXF File not found at >> {dxfPath}', exitRequired=True)
-    else:
-        if dxfType.lower() == 'input':
-            try:
-                outputImagePath = inputImageProducer(dxfPath)
-            except Exception as e:
-                gracefulErrors(f'There was an error at inputImageProducer() for DXF File >> {dxfPath}', exitRequired=True)
-        elif dxfType.lower() == 'output':
-            try:
-                outputImagePath = outputImageProducer(dxfPath)
-            except Exception as e:
-                gracefulErrors(f'There was an error at outputImageProducer() for DXF File >> {dxfPath}', exitRequired=True)
-    
-    outputDir = os.path.join(os.path.dirname(dxfPath), "tempStorage")
-    os.makedirs(outputDir, exist_ok=True)
-    
-    try:
-        rotatedImagesCount = imageRotatory(outputImagePath, outputDir)
-    except Exception as e:
-        gracefulErrors(f'There was an error at imageRotatory() for image >> {outputImagePath}', exitRequired=True)
-    
-    if __name__ == '__main__':
-        os.system('cls')
-        if dxfType.lower() == 'input':
-            print(':::::::: Processing Input File ::::::::')
-        elif dxfType.lower() == 'output':
-            print(':::::::: Processing Output File ::::::::')
-        print(f'\n[FILE NAME] {os.path.basename(dxfPath)}')
-        print(f'\n✅ Images are ready. There are in total {rotatedImagesCount} Rotated Images.\n')
-    
-    extracted_text_list = []
-    for i, rotatedImage in enumerate(os.listdir(outputDir), start=1):
-        if __name__ == '__main__':
-            print(f'\nProcessing Text [Image {i}]: {rotatedImage}')
-        pathToRotatedImage = os.path.join(outputDir, rotatedImage)
-        
-        try:
-            bufferText = textScanner(pathToRotatedImage)
-            extracted_text_list += bufferText
-        except Exception as e:
-            gracefulErrors(f'There was an issue while extracting text from image >> {pathToRotatedImage} :: {e}')
-            continue
-        
-        if progress_callback:
-            progressCounter += 1  # Increment the counter BEFORE calling the callback
-            progress_callback(progressCounter/progressTotal)
-        
-    try:
-        shutil.rmtree(outputDir)
-    except:
-        gracefulErrors(f'There was an issue while removing "tempStorage" working folder>> {outputDir}')
-    
-    if __name__ == '__main__':
-        os.system('cls')
-    
-    sendableList = [word for sentence in extracted_text_list for word in sentence.split()]
-    
+    preReturnableList = []
     if dxfType.lower() == 'input':
+        import re
+
+        filters = [
+            r'\{\\H1\.88x;\(}',
+            r'\{\\H1\.88x;\)}',
+        ]
+        
         try:
-            preReturnList = inputHardCodedFilter(sendableList)   # Get post filter values.
+            doc = ezdxf.readfile(dxfPath)
+            msp = doc.modelspace()
+            for mtext_entity in msp.query('MTEXT[layer=="41"]'):
+                try:
+                    value = getattr(mtext_entity, 'text')
+                    if isinstance(value, (int, float, str)):
+                        cleaned_data = re.sub('|'.join(filters), '', value)
+                        cleaned_data = re.sub(r'[^;]+;', '', cleaned_data)
+                        cleaned_data = cleaned_data.replace(',', '.')
+                        if cleaned_data and not cleaned_data.startswith('.'):
+                            cleaned_data = cleaned_data.strip()
+                            cleaned_data = re.sub(r'%%[pdc]', '', cleaned_data)
+                            cleaned_data = cleaned_data.strip()
+                            if re.match(r'^-?\d*\.?\d+$', cleaned_data):
+                                preReturnableList.append(f'{float(cleaned_data):.1f}')
+                except:
+                    continue
+            if preReturnableList:
+                returnableList = sorted(set(float(value) for value in preReturnableList if (value != '0.0')))
         except Exception as e:
-            gracefulErrors(f'Error at inputHardCodedFilter() in renderValues() :: {e}')
-            preReturnList = sendableList
+            gracefulErrors(f"Error processing Input DXF File >> {os.path.basename(dxfPath)} :: {e}")
+            return []
     elif dxfType.lower() == 'output':
         try:
-            preReturnList = outputHardCodedFilter(sendableList)   # Get post filter values.
+            doc = ezdxf.readfile(dxfPath)
+            msp = doc.modelspace()
+            for entity in msp.query('DIMENSION'):
+                for attr_name in dir(entity.dxf):
+                    if not attr_name.startswith('_'):  # Avoid internal attributes
+                        try:
+                            value = entity.dxf.get(attr_name)
+                            if attr_name == 'actual_measurement':
+                                preReturnableList.append(f'{float(str(value).strip()):.1f}')
+                        except:
+                            continue
+            if preReturnableList:
+                returnableList = sorted(set(float(value.strip()) for value in preReturnableList if (value != '1.0')))
         except Exception as e:
-            gracefulErrors(f'Error at outputHardCodedFilter() in renderValues() :: {e}')
-            preReturnList = sendableList
-    
-    returnList = uniquenessEngine(preReturnList)    # Get unique list of elements.
-    
-    try:
-        returnList = [float(entry) for entry in returnList]
-    except Exception as e:
-        gracefulErrors(f'Error while converting returnList to float at renderValues() :: {e}')
-    
-    return returnList
+            gracefulErrors(f"Error processing Output DXF File >> {os.path.basename(dxfPath)} :: {e}")
+            return []
+    return returnableList
 
 def pathCorresponder(inputDirPath, outputDirPath):
     inputFilesList = sorted([file for file in os.listdir(inputDirPath) if file.lower().endswith('.dxf')])
@@ -479,23 +137,19 @@ def pathCorresponder(inputDirPath, outputDirPath):
     
     return returnableList
 
-def harvesterFunc(inputDirPath, outputDirPath, progress_callback=None):
-    if progress_callback:
-        global progressTotal
-        global progressCounter
-    
+def harvesterFunc(inputDirPath, outputDirPath, progress_callback=None):    
     finalResults = []
     corresponderList = pathCorresponder(inputDirPath, outputDirPath)
     
     if progress_callback:
-        progressTotal = len(corresponderList)*16
+        progressTotal = len(corresponderList)
         progressCounter = 0
     
     for fileListItem in corresponderList:
         if len(fileListItem) == 4 and fileListItem[3].lower() == 'matched':
             fileName = fileListItem[0]
-            inputValuesList = renderValues(fileListItem[1], dxfType='Input', progress_callback=progress_callback)
-            outputValuesList = renderValues(fileListItem[2], dxfType='Output', progress_callback=progress_callback)
+            inputValuesList = renderValues(fileListItem[1], dxfType='Input')
+            outputValuesList = renderValues(fileListItem[2], dxfType='Output')
             if (len(inputValuesList) * len(outputValuesList)) == 0:
                 similarityVerdict = 'False'
             else:
@@ -503,12 +157,15 @@ def harvesterFunc(inputDirPath, outputDirPath, progress_callback=None):
             inputValuesList, outputValuesList = sorted(inputValuesList, reverse=True), sorted(outputValuesList, reverse=True)
             outputValuesList = [val if val in outputValuesList else '' for val in inputValuesList] + [value for value in outputValuesList if value not in inputValuesList]
             finalResults.append([fileName[:-4], inputValuesList, outputValuesList, similarityVerdict])
+            if progress_callback:
+                progressCounter += 1
+                progress_callback(progressCounter/progressTotal)
         elif len(fileListItem) == 2 and fileListItem[1].lower() == 'unmatched':
             fileName = fileListItem[0]
             similarityVerdict = 'unmatched'
             finalResults.append([fileName[:-4], [], [], similarityVerdict])
             if progress_callback:
-                progressCounter += 16
+                progressCounter += 1
                 progress_callback(progressCounter/progressTotal)
     
     return finalResults
@@ -538,12 +195,12 @@ def excelProcessor(exportTemplatePath, exportableData, exportDir=tempfile.gettem
 
         if ((len(input_vals) * len(output_vals)) * (verdict.lower() != 'unmatched')):
             for j, val in enumerate(input_vals):
-                ws.cell(row=input_row, column=3 + j, value=val)
+                ws.cell(row=input_row, column=3 + j, value=float(val))
             
             for j, val in enumerate(output_vals):
                 if val == '':
                     continue
-                ws.cell(row=output_row, column=3 + j, value=val)
+                ws.cell(row=output_row, column=3 + j, value=float(val))
 
     savePath = os.path.join(exportDir, "Results-EXPORT.xlsx")
     
