@@ -11,19 +11,19 @@
                 Post Processing parsed values > Manage workspace cleanUp >
                 Present the results in a seamless fashion > Export to a structured Excel File on Demand.
 
-[LIBRARIES USED]    (RUNNING HEADLESS)      os, tempfile
-                    (RUNNING SCRIPT AS IS)  tkinter.filedialog, time.sleep, ctypes.windll
+[LIBRARIES USED]    (RUNNING WITH GUI)      os, re, tempfile, shutil, time.sleep, ezdxf, openpyxl.load_workbook
+                    (RUNNING WITH CLI)      + tkinter.filedialog, ctypes.windll
 
 [FUNCTIONS]     gracefulErrors(errorMessage),
                 renderValues(dxfPath, dxfType),
                 pathCorresponder(inputDirPath, outputDirPath),
                 harvesterFunc(inputDirPath, outputDirPath),   --> MAIN FUNCTION
-                excelProcessor(exportableData, exportDir)
+                excelProcessor(exportableData)
 
 [NOTE]  1.  This code runs only on DXF files.
         2.  Please make sure, filenames are exactly identical in both the folders before running this script.
         3.  Please make sure you have the Excel Template file named "Results-ExportTemplate.xlsx" in the same directory as the script.
-        4.  Main Program Code is also included for better UI/UX, independent of a Front-End Interface. (Refer section starting Line:216)
+        4.  Main Section is also included for better UI/UX, while using with CLI. (Refer section starting Line:213)
 
 ------------------------------------------------------------- DOCUMENTATION ENDS HERE
 '''
@@ -51,7 +51,7 @@ def gracefulErrors(errorMessage, exitRequired=False):
             raise Exception(errorMessage)
     elif not exitRequired:
         print(f'\n\n❌ WARNING ::: {errorMessage}\n\n')
-        if ('errorLogs' in locals()) or ('errorLogs' in globals()):
+        if (('errorLogs' in locals()) or ('errorLogs' in globals())) and (__name__ == '__main__'):
             errorLogs.append(f'❌ WARNING ::: {errorMessage}')
 
 def renderValues(dxfPath, dxfType):
@@ -81,7 +81,7 @@ def renderValues(dxfPath, dxfType):
                             cleaned_data = re.sub(r'%%[pdc]', '', cleaned_data)
                             cleaned_data = cleaned_data.strip()
                             if re.match(r'^-?\d*\.?\d+$', cleaned_data):
-                                preReturnableList.append(f'{float(cleaned_data):.1f}')
+                                preReturnableList.append(f'{float(cleaned_data):.2f}')
                 except:
                     continue
             if preReturnableList:
@@ -95,11 +95,10 @@ def renderValues(dxfPath, dxfType):
             msp = doc.modelspace()
             for entity in msp.query('DIMENSION'):
                 for attr_name in dir(entity.dxf):
-                    if not attr_name.startswith('_'):  # Avoid internal attributes
+                    if attr_name == 'actual_measurement':
                         try:
                             value = entity.dxf.get(attr_name)
-                            if attr_name == 'actual_measurement':
-                                preReturnableList.append(f'{float(str(value).strip()):.1f}')
+                            preReturnableList.append(f'{float(str(value).strip()):.2f}')
                         except:
                             continue
             if preReturnableList:
@@ -122,7 +121,7 @@ def pathCorresponder(inputDirPath, outputDirPath):
     returnableList = []
     
     for index in range(len(mutualFilesList)):
-        filename = str(mutualFilesList[index])   # Use either of the list to iterate. Doesn't matter.
+        filename = str(mutualFilesList[index])
         inputFileName = f'{inputDirPath}/{filename}'
         outputFileName = f'{outputDirPath}/{filename}'
         flag = 'matched'
@@ -137,7 +136,7 @@ def pathCorresponder(inputDirPath, outputDirPath):
     
     return returnableList
 
-def harvesterFunc(inputDirPath, outputDirPath, progress_callback=None):    
+def harvesterFunc(inputDirPath, outputDirPath, progress_callback=None):
     finalResults = []
     corresponderList = pathCorresponder(inputDirPath, outputDirPath)
     
@@ -170,7 +169,7 @@ def harvesterFunc(inputDirPath, outputDirPath, progress_callback=None):
     
     return finalResults
 
-def excelProcessor(exportTemplatePath, exportableData, exportDir=tempfile.gettempdir()):
+def excelProcessor(exportableData, exportTemplatePath=os.path.join(os.path.dirname(__file__), 'Results-ExportTemplate.xlsx'), exportDir=tempfile.gettempdir()):
     from openpyxl import load_workbook
     
     try:
@@ -267,9 +266,13 @@ if __name__ == '__main__':
     if keypress.lower() == 'yes':
         print(":::::::: Choose a folder to export the Excel in the popup that appears now. ::::::::")
         exportDir = fd.askdirectory(title='Select the folder saving your Excel Export File.')
-        exportTemplatePath = os.path.dirname(__file__.replace('\\', '/')) + '/Results-ExportTemplate.xlsx'     # Script's Current Directory
+        exportTemplatePath = os.path.join(os.path.dirname(__file__), 'Results-ExportTemplate.xlsx')
         try:
-            exportedPath = excelProcessor(exportTemplatePath=exportTemplatePath , exportableData=finalResults, exportDir=exportDir)
+            exportedPath = excelProcessor(
+                exportableData=finalResults,
+                exportTemplatePath=exportTemplatePath,
+                exportDir=exportDir
+            )
         except Exception as e:
             gracefulErrors(f'There was an issue while exporting your results at excelProcessor() :: {e}', exitRequired=True)
         print(f'\n\nYour Excel file has been exported to --> {exportedPath}.')
