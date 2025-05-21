@@ -102,7 +102,7 @@ def renderValues(dxfPath, dxfType):
                         except:
                             continue
             if preReturnableList:
-                returnableList = sorted(set(float(value.strip()) for value in preReturnableList if (value != '1.0')))
+                returnableList = sorted(set(float(value.strip()) for value in preReturnableList if (value != '0.96')))
         except Exception as e:
             gracefulErrors(f"Error processing Output DXF File >> {os.path.basename(dxfPath)} :: {e}")
             return []
