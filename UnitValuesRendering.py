@@ -81,7 +81,7 @@ def renderValues(dxfPath, dxfType):
                             cleaned_data = re.sub(r'%%[pdc]', '', cleaned_data)
                             cleaned_data = cleaned_data.strip()
                             if re.match(r'^-?\d*\.?\d+$', cleaned_data):
-                                preReturnableList.append(f'{float(cleaned_data):.2f}')
+                                preReturnableList.append(f'{float(cleaned_data):.1f}')
                 except:
                     continue
             if preReturnableList:
@@ -98,11 +98,11 @@ def renderValues(dxfPath, dxfType):
                     if attr_name == 'actual_measurement':
                         try:
                             value = entity.dxf.get(attr_name)
-                            preReturnableList.append(f'{float(str(value).strip()):.2f}')
+                            preReturnableList.append(f'{float(str(value).strip()):.1f}')
                         except:
                             continue
             if preReturnableList:
-                returnableList = sorted(set(float(value.strip()) for value in preReturnableList if (value != '0.96')))
+                returnableList = sorted(set(float(value.strip()) for value in preReturnableList if (value != '1.0')))
         except Exception as e:
             gracefulErrors(f"Error processing Output DXF File >> {os.path.basename(dxfPath)} :: {e}")
             return []
