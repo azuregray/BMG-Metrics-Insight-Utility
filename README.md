@@ -39,6 +39,8 @@ Please note that this tool has been tried and tested on `WINDOWS` OS only. Setup
 
 > Step 05: Follow interface on page to continue.
 
+**[All The Above Steps Are Explained In A Video Here.](https://github.com/azuregray/BMGValuesCheckingTool/raw/refs/heads/main/00-DemoVideos/02-UserGuide_BMGValuesCheckingTool-Kennametal.mp4)**
+
 ---
 
 ## **`For Developers / Debuggers / Automation Staff:`**
