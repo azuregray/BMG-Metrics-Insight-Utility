@@ -39,7 +39,7 @@ Please note that this tool has been tried and tested on `WINDOWS` OS only. Setup
 
 > Step 05: Follow interface on page to continue.
 
-#### **[`NEED A VIDEO REFERENCE FOR THE ABOVE STEPS?`](https://github.com/azuregray/BMGValuesCheckingTool/raw/refs/heads/main/00-DemoVideos/02-UserGuide_BMGValuesCheckingTool-Kennametal.mp4)**
+### **[`NEED A VIDEO REFERENCE FOR THE ABOVE STEPS?`](https://github.com/azuregray/BMGValuesCheckingTool/raw/refs/heads/main/00-DemoVideos/02-UserGuide_BMGValuesCheckingTool-Kennametal.mp4)**
 
 ---
 
