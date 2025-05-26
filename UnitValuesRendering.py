@@ -11,8 +11,8 @@
                 Post Processing parsed values > Manage workspace cleanUp >
                 Present the results in a seamless fashion > Export to a structured Excel File on Demand.
 
-[LIBRARIES USED]    (RUNNING WITH GUI)      os, re, tempfile, shutil, time.sleep, ezdxf, openpyxl.load_workbook
-                    (RUNNING WITH CLI)      + tkinter.filedialog, ctypes.windll
+[LIBRARIES USED]    (RUNNING WITH Web Interface)    os, re, tempfile, shutil, time.sleep, ezdxf, openpyxl.load_workbook
+                    (RUNNING WITH CLI)              + tkinter.filedialog, ctypes.windll
 
 [FUNCTIONS]     gracefulErrors(errorMessage),
                 renderValues(dxfPath, dxfType),
