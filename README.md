@@ -21,9 +21,9 @@
 
 ## **`INSTALLATION/SETUP`**
 
-> Step 01: Please use our [**`LATEST RELEASE PAGE`**](https://github.com/azuregray/BMGValuesCheckingTool/releases/latest) and find **Kennametal.BMGVCT.zip**
+> Step 01: Please use our [**`LATEST RELEASE PAGE`**](https://github.com/azuregray/BMGValuesCheckingTool/releases/latest) and find **`Kennametal.BMGVCT.zip`**
 
-> Step 02: Extract **Kennametal.BMGVCT.zip** in your Downloads folder into a new folder.
+> Step 02: Extract **`Kennametal.BMGVCT.zip`** in your Downloads folder into a new folder.
 
 > Step 03: After you extract the contents into a folder:
 
@@ -33,9 +33,11 @@ As we have provided a `requirements.txt` file, Just run this in a Terminal `Inte
 python -m pip install -r ./requirements.txt; streamlit run ./app.py
 ```
 
-> Please note that this tool has been tried and tested on `WINDOWS` OS only.
+Please note that this tool has been tried and tested on `WINDOWS` OS only. Setup instruction on Linux Systems or Server and MacOS may differ.
 
-> Setup instruction on Linux Systems or Server and MacOS may differ.
+> Step 04: The above command must automatically redirect you to the page where you app is being hosted. Otherwise, just try this: **http://localhost:8501/**
+
+> Step 05: Follow interface on page to continue.
 
 ---
 
