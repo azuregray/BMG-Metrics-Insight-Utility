@@ -20,7 +20,7 @@
 ---
 
 ## **`INSTALLATION/SETUP`**
-- **How to use the App**
+
 > Step 01: Please use our [**`LATEST RELEASE PAGE`**](https://github.com/azuregray/KMTL-BoringToolsDataSearchEngine/releases/latest) and find **Kennametal.BMGVCT.zip**
 
 > Step 02: Extract **Kennametal.BMGVCT.zip** in your Downloads folder into a new folder.
