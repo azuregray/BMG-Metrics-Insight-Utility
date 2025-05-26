@@ -56,6 +56,7 @@ def gracefulErrors(errorMessage, exitRequired=False):
 
 def renderValues(dxfPath, dxfType):
     import ezdxf
+    from math import degrees
     
     preReturnableList = []
     if dxfType.lower() == 'input':
@@ -94,15 +95,13 @@ def renderValues(dxfPath, dxfType):
             doc = ezdxf.readfile(dxfPath)
             msp = doc.modelspace()
             for entity in msp.query('DIMENSION'):
-                for attr_name in dir(entity.dxf):
-                    if attr_name == 'actual_measurement':
-                        try:
-                            value = entity.dxf.get(attr_name)
-                            preReturnableList.append(f'{float(str(value).strip()):.1f}')
-                        except:
-                            continue
+                value = entity.dxf.get('actual_measurement')
+                if entity.dxf.hasattr('dimtype') and entity.dxf.get('dimtype') == 34:
+                    preReturnableList.append(f'{float(str(degrees(value)).strip()):.1f}')
+                else:
+                    preReturnableList.append(f'{float(str(value).strip()):.1f}')
             if preReturnableList:
-                returnableList = sorted(set(float(value.strip()) for value in preReturnableList if (value != '1.0')))
+                returnableList = sorted(set(float(value.strip()) for value in preReturnableList))
         except Exception as e:
             gracefulErrors(f"Error processing Output DXF File >> {os.path.basename(dxfPath)} :: {e}")
             return []
