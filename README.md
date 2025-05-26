@@ -41,12 +41,28 @@ Please note that this tool has been tried and tested on `WINDOWS` OS only. Setup
 
 ---
 
+## **For Developers / Debuggers / Automation Staff:**
+
+> There's one hidden CLI Interface for the app built into **`UnitValuesRendering.py`**.
+
+So you may just run the following command to quickly run a CLI interface of the program specifically designed to be just as good as web interface.
+
+```
+python ./UnitValuesRendering.py
+```
+
+Helpful for testing all the functionality given in the program. 
+It has a built in Error Handler and Error Logging Mechanism, so that you can efficiently debug/develop.
+
+---
+
 ## **For respected Contributors:**
+
 > Please refer the [**`OFFICIAL GITHUB CONTRIBUTION GUIDE`**](https://docs.github.com/en/get-started/exploring-projects-on-github/contributing-to-a-project)
 
 ---
 
-- **LINK TO `THE ORIGINAL REPOSITORY`**
+## **Link to the original `Azuregray's BMGcaluesCheckingTool`**
 
 > **https://github.com/azuregray/BMGValuesCheckingTool/**
 
