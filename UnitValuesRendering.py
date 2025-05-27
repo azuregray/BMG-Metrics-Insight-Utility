@@ -3,7 +3,7 @@
 
 [SCRIPT NAME]   UnitValuesRendering.py
 
-[SCRIPT TYPE/DEPENDENCIES]  No External Script Dependencies; Excel Template File - "Results-ExportTemplate.xlsx"
+[SCRIPT TYPE/DEPENDENCIES]  No External Script Dependencies; Excel Template File - "Results-ExportTemplate.xlsx";
 
 [DESCRIPTION]   This python script combines the functionalities of both Input & Output Files Processing >
                 Targeting purely dimension layers of each DXF file >
@@ -23,7 +23,7 @@
 [NOTE]  1.  This code runs only on DXF files.
         2.  Please make sure, filenames are exactly identical in both the folders before running this script.
         3.  Please make sure you have the Excel Template file named "Results-ExportTemplate.xlsx" in the same directory as the script.
-        4.  Main Section is also included for better UI/UX, while using with CLI. (Refer section starting Line:213)
+        4.  Main Section is also included for better UI/UX, while using with CLI. (Refer section starting Line:212)
 
 ------------------------------------------------------------- DOCUMENTATION ENDS HERE
 '''
