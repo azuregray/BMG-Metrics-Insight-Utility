@@ -1,6 +1,3 @@
-
-
-
 # **BMG&ensp;Values&ensp;Checking&ensp;Tool**
 
 ## **`KENNAMETAL INC.`**
@@ -19,7 +16,7 @@
 
 ---
 
-### **`Inviting you to try out the Web App:`**
+### **`Inviting you to try out the Web App: (No Longer Supported)`**
 
 > Link to the BMGVCT Web App hosted on Streamlit >> [**`BMGTOOL.STREAMLIT.APP`**](https://bmgtool.streamlit.app)
 
