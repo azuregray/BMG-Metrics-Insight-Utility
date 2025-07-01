@@ -3,6 +3,8 @@
 
 [SCRIPT NAME]   UnitValuesRendering.py
 
+[SOURCE @ GITHUB]   https://github.com/azuregray/BMG-Values-Comparison-Tool
+
 [SCRIPT TYPE/DEPENDENCIES]  No External Script Dependencies; Excel Template File - "Results-ExportTemplate.xlsx";
 
 [DESCRIPTION]   This python script combines the functionalities of both Input & Output Files Processing >

@@ -1,6 +1,6 @@
-# **BMG&ensp;Values&ensp;Checking&ensp;Tool**
+# **BMG&ensp;Values&ensp;Comparison&ensp;Tool**
 
-#### **`[DESCRIPTION]`** This tool can be used as an in-the-middle software solution as a first step in the process of BMG Drawing Verification, to compare dimensional accuracy while checking 2D Wireframe Drawings (Input Files) with Open-Source ones (Output Files).
+#### **`[DESCRIPTION]`** This tool can be used as an in-the-middle software solution as a first step in the process of BMG Drawing Verification, to compare dimensional accuracy while comparing 2D Wireframe Drawings (Input Files) with Open-Source ones (Output Files).
 
 > **Project Duration - `Jan - May 2025 (4 Months)`**
 
@@ -22,7 +22,7 @@
 
 ## **`INSTALLATION/SETUP`**
 
-> Step 01: Please use our [**`LATEST RELEASE PAGE`**](https://github.com/azuregray/BMGValuesCheckingTool/releases/latest) and find **`BMGVCT.zip`**
+> Step 01: Please use our [**`LATEST RELEASE PAGE`**](https://github.com/azuregray/BMG-Values-Comparison-Tool/releases/latest) and find **`BMGVCT.zip`**
 
 > Step 02: Extract **`BMGVCT.zip`** in your Downloads folder into a new folder.
 
@@ -40,7 +40,7 @@ Please note that this tool has been tried and tested on `WINDOWS` OS only. Setup
 
 > Step 05: Follow interface on page to continue.
 
-### **[`NEED A VIDEO REFERENCE ON HOW TO USE THE TOOL?`](https://github.com/azuregray/BMGValuesCheckingTool/raw/refs/heads/main/00-DemoVideos/UserGuide_BMGValuesCheckingTool-GitHub.mp4)**
+### **[`NEED A VIDEO REFERENCE ON HOW TO USE THE TOOL?`](https://github.com/azuregray/BMG-Values-Comparison-Tool/raw/refs/heads/main/00-DemoVideos/UserGuide_BMGValuesComparisonTool-GitHub.mp4)**
 
 ---
 
@@ -65,8 +65,8 @@ It has a built in Error Handler and Error Logging Mechanism, so that you can eff
 
 ---
 
-## **Link to the ORIGINAL `Azuregray's BMGcaluesCheckingTool`**
+## **Link to the ORIGINAL `Azuregray's BMG Values Comparison Tool`**
 
-> **https://github.com/azuregray/BMGValuesCheckingTool/**
+> **https://github.com/azuregray/BMG-Values-Comparison-Tool/**
 
 ---
