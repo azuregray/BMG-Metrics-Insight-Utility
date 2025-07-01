@@ -1,8 +1,6 @@
 # **BMG&ensp;Values&ensp;Checking&ensp;Tool**
 
-## **`KENNAMETAL INC.`**
-
-#### **`[DESCRIPTION]`** This tool can be used as an in-the-middle software solution as a first step in the process of BMG Drawing Verification, to compare dimensional accuracy while checking 2D Wireframe Drawings (Input Files) with Open-Source ones (Output Files). Made for Kennametal.
+#### **`[DESCRIPTION]`** This tool can be used as an in-the-middle software solution as a first step in the process of BMG Drawing Verification, to compare dimensional accuracy while checking 2D Wireframe Drawings (Input Files) with Open-Source ones (Output Files).
 
 > **Project Duration - `Jan - May 2025 (4 Months)`**
 
@@ -24,9 +22,9 @@
 
 ## **`INSTALLATION/SETUP`**
 
-> Step 01: Please use our [**`LATEST RELEASE PAGE`**](https://github.com/azuregray/BMGValuesCheckingTool/releases/latest) and find **`Kennametal.BMGVCT.zip`**
+> Step 01: Please use our [**`LATEST RELEASE PAGE`**](https://github.com/azuregray/BMGValuesCheckingTool/releases/latest) and find **`BMGVCT.zip`**
 
-> Step 02: Extract **`Kennametal.BMGVCT.zip`** in your Downloads folder into a new folder.
+> Step 02: Extract **`BMGVCT.zip`** in your Downloads folder into a new folder.
 
 > Step 03: After you extract the contents into a folder:
 
@@ -42,7 +40,7 @@ Please note that this tool has been tried and tested on `WINDOWS` OS only. Setup
 
 > Step 05: Follow interface on page to continue.
 
-### **[`NEED A VIDEO REFERENCE ON HOW TO USE THE TOOL?`](https://github.com/azuregray/BMGValuesCheckingTool/raw/refs/heads/main/00-DemoVideos/02-UserGuide_BMGValuesCheckingTool-Kennametal.mp4)**
+### **[`NEED A VIDEO REFERENCE ON HOW TO USE THE TOOL?`](https://github.com/azuregray/BMGValuesCheckingTool/raw/refs/heads/main/00-DemoVideos/UserGuide_BMGValuesCheckingTool-GitHub.mp4)**
 
 ---
 
