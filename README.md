@@ -1,6 +1,6 @@
-# **BMG&ensp;Values&ensp;Comparison&ensp;Tool**
+# **AutoCAD&ensp;Drawing&ensp;-&ensp;BMG&ensp;Values&ensp;Comparison&ensp;Tool**
 
-#### **`[DESCRIPTION]`** This tool can be used as an in-the-middle software solution as a first step in the process of BMG Drawing Verification, to compare dimensional accuracy while comparing 2D Wireframe Drawings (Input Files) with Open-Source ones (Output Files).
+#### **`[DESCRIPTION]`** This tool can be used as an in-the-middle software solution as a first step in the process of BMG Drawing or Engineering CAD Drawing Verification, to compare dimensional accuracy while comparing 2D Wireframe Drawing types (Input Files) with Open-Source types (Output Files).
 
 > **Project Duration - `Jan - May 2025 (4 Months)`**
 
