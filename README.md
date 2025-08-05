@@ -22,7 +22,7 @@
 
 ## **`INSTALLATION/SETUP`**
 
-> Step 01: Please use our [**`LATEST RELEASE PAGE`**](https://github.com/azuregray/BMG-Values-Comparison-Tool/releases/latest) and find **`BMGVCT.zip`**
+> Step 01: Please use our [**`LATEST RELEASE PAGE`**](https://github.com/azuregray/BMG-Metrics-Insight-Utility/releases/latest) and find **`BMGVCT.zip`**
 
 > Step 02: Extract **`BMGVCT.zip`** in your Downloads folder into a new folder.
 
@@ -40,7 +40,7 @@ Please note that this tool has been tried and tested on `WINDOWS` OS only. Setup
 
 > Step 05: Follow interface on page to continue.
 
-### **[`NEED A VIDEO REFERENCE ON HOW TO USE THE TOOL?`](https://github.com/azuregray/BMG-Values-Comparison-Tool/raw/refs/heads/main/00-DemoVideos/UserGuide_BMGValuesComparisonTool-GitHub.mp4)**
+### **[`NEED A VIDEO REFERENCE ON HOW TO USE THE TOOL?`](https://github.com/azuregray/BMG-Metrics-Insight-Utility/raw/refs/heads/main/00-DemoVideos/UserGuide_BMGValuesComparisonTool-GitHub.mp4)**
 
 ---
 
@@ -67,6 +67,6 @@ It has a built in Error Handler and Error Logging Mechanism, so that you can eff
 
 ## **Link to the ORIGINAL `Azuregray's BMG Values Comparison Tool`**
 
-> **https://github.com/azuregray/BMG-Values-Comparison-Tool/**
+> **https://github.com/azuregray/BMG-Metrics-Insight-Utility/**
 
 ---
