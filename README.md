@@ -1,6 +1,6 @@
 # **AutoCAD&ensp;Drawing&ensp;-&ensp;BMG&ensp;Metrics&ensp;Insight&ensp;Utility**
 
-#### **`[DESCRIPTION]`** This software can be used as an in-the-middle software solution as a first step in the process of BMG Drawing or Engineering CAD Drawing Verification, to compare dimensional accuracy while comparing 2D Wireframe Drawing types (Input Files) with Open-Source/Standard types (Output Files).
+#### **`DESCRIPTION`** This software can be used as an in-the-middle software solution as a first step in the process of BMG Drawing or Engineering CAD Drawing Verification, to compare dimensional accuracy while comparing 2D Wireframe Drawing types (Input Files) with Open-Source/Standard types (Output Files).
 
 > **Project Duration - `Jan - May 2025 (4 Months)`**
 
