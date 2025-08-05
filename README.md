@@ -22,9 +22,9 @@
 
 ## **`INSTALLATION/SETUP`**
 
-> Step 01: Please use our [**`LATEST RELEASE PAGE`**](https://github.com/azuregray/BMG-Metrics-Insight-Utility/releases/latest) and find **`BMGVCT.zip`**
+> Step 01: Please use our [**`LATEST RELEASE PAGE`**](https://github.com/azuregray/BMG-Metrics-Insight-Utility/releases/latest) and find **`BMGMIU.zip`**
 
-> Step 02: Extract **`BMGVCT.zip`** in your Downloads folder into a new folder.
+> Step 02: Extract **`BMGMIU.zip`** in your Downloads folder into a new folder.
 
 > Step 03: After you extract the contents into a folder:
 
